@@ -1,0 +1,135 @@
+name: build
+on: [push, pull_request]
+jobs:
+  pre-matrix_setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+
+      - uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            // you set the main test folder  
+            var testFolderName = "test-folder";
+            var distFilesArray = [];
+
+            cleanTextList = (k) =>
+              k
+                .filter((e) => e != null)
+                .map((e) => e.trim())
+                .filter((e) => e != null && e != "");
+
+            function uniq(k) {
+              var map = {};
+              k.forEach((element) => {
+                if (element != null && element != "") map[element] = element;
+              });
+              return Object.values(map);
+            }
+
+            var child_process = require("child_process");
+            var path = require("path");
+ 
+            var wordInCommits = [];
+            var affectedFiles = [];
+
+            if (context.payload.pull_request != null) {
+              // if its a pull request
+             console.log("this is a pr" );
+
+              var self_url = context.payload.pull_request._links.self.href;
+              var pr = await github.request(self_url);
+              var cmts = await github.request(self_url + "/commits");
+              var fls = await github.request(self_url + "/files");
+
+              cmts = cmts.data
+                .map((D) => (D.commit || {}).message)
+                .filter((k) => k != null);
+
+              wordInCommits = cleanTextList(pr.data.title.split(" "));
+              cmts.forEach(
+                (commitMessage) =>
+                  (wordInCommits = [
+                    ...wordInCommits,
+                    ...cleanTextList(commitMessage.split(" ")),
+                  ])
+              );
+              affectedFiles = fls.data.map((D) => D.filename);
+            } else {
+             console.log("this is a commit" );
+              
+              var commitMessage = context.payload.head_commit.message;
+              var difcmd='git show --pretty="" --name-only HEAD';
+              var fileNames =""+ child_process  .execSync(difcmd  ) ; 
+              wordInCommits = cleanTextList(commitMessage.split(" "));
+              affectedFiles = cleanTextList(fileNames.split("\n"));
+            }
+
+            wordInCommits = uniq(wordInCommits);
+            wordInCommits = wordInCommits.filter((k) => k.length > 3);
+            // TODO IMPLEMENT TEST SELECTION LOGIC BASED ON THE FILES(files:faraible) + COMMITS WORDS (commits:variable)
+            console.log("commit words", wordInCommits);
+            console.log("affected files", affectedFiles);
+
+            // the test folder name
+            // retive only fille tracked by the git repo
+            var testFiles = cleanTextList(
+              (child_process.execSync("git ls-files") + "").split("\n")
+            ).filter((k) => k.indexOf(testFolderName.toLowerCase()) == 0);
+            testFiles.forEach((fileName) => {
+              // todo retive the list a file
+              var fn = path.parse(fileName).name.toLowerCase();
+
+              for (let word of wordInCommits) {
+                if (fn.indexOf(word.toLowerCase()) >= 0) {
+                  distFilesArray.push(fileName);
+                  return;
+                }
+              }
+              for (let affFile of affectedFiles) {
+                var fp = path.parse(affFile);
+                var AffFileName = (fp.name || fp.ext || "").toLowerCase();
+                if (
+                  AffFileName.length > 0 &&
+                  fn.indexOf(AffFileName.toLowerCase()) >= 0
+                ) {
+                  distFilesArray.push(fileName);
+                  return;
+                }
+              }
+            });
+
+            require("fs").writeFileSync(
+              "./matrix-values.json",
+              JSON.stringify({
+                include: distFilesArray.map((k) => ({
+                  testFile: k,
+                })),
+              })
+            );
+            // core.setOutput("matrix", process.env.jsonconfig);
+
+      - id: set-matrix
+        run: |
+          ls -a  
+          export jsonconfig=$(<matrix-values.json)
+          echo $jsonconfig
+          echo "end of logic"
+          echo "::set-output name=matrix::$jsonconfig"
+
+  job2:
+    needs: pre-matrix_setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.pre-matrix_setup.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo ${{matrix.testFile}}
+      - run: ls

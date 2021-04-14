@@ -1,0 +1,22 @@
+{
+  "name": "github-action-demos",
+  "version": "1.0.1",
+  "description": "0010",
+  "main": "slog.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/badre429/github-action-demos.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/badre429/github-action-demos/issues"
+  },
+  "homepage": "https://github.com/badre429/github-action-demos#readme",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}

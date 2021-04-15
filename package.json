@@ -18,5 +18,9 @@
   "homepage": "https://github.com/badre429/github-action-demos#readme",
   "dependencies": {
     "axios": "^0.21.1"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "@types/node": "^14.14.39"
   }
 }

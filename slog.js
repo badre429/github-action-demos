@@ -6,7 +6,22 @@
           {
             var testFolderName = "test-folder";
             var distFilesArray = [];
-
+            var child_process = require("child_process");
+            var path = require("path");
+            var fs = require("fs");
+            function folderFileTree(ld) {
+              var file_lst = [];
+              fs.readdirSync(ld).forEach((directory) => {
+                var nPath = path.join(ld, directory);
+                if (fs.statSync(nPath).isDirectory()) {
+                  file_lst = [...file_lst, ...folderFileTree(nPath)];
+                } else { 
+                  file_lst.push(nPath);
+                }
+              });
+              return file_lst;
+            }
+            console.log(folderFileTree(testFolderName));
             cleanTextList = (k) =>
               k
                 .filter((e) => e != null)
@@ -20,9 +35,6 @@
               });
               return Object.values(map);
             }
-
-            var child_process = require("child_process");
-            var path = require("path");
             console.log("github.event ", github.event);
             var wordInCommits = [];
             var affectedFiles = [];
@@ -30,9 +42,9 @@
             if (context.payload.pull_request != null) {
               // if its a pull request
               var self_url = context.payload.pull_request._links.self.href;
-              var pr = await github.request(self_url);
-              var cmts = await github.request(self_url + "/commits");
-              var fls = await github.request(self_url + "/files");
+              // var pr = await github.request(self_url);
+              // var cmts = await github.request(self_url + "/commits");
+              // var fls = await github.request(self_url + "/files");
 
               cmts = cmts.data
                 .map((D) => (D.commit || {}).message)

@@ -37,6 +37,19 @@ jobs:
             var child_process = require("child_process");
             var path = require("path");
  
+            var fs = require("fs");
+            function folderFileTree(ld) {
+              var file_lst = [];
+              fs.readdirSync(ld).forEach((directory) => {
+                var nPath = path.join(ld, directory);
+                if (fs.statSync(nPath).isDirectory()) {
+                  file_lst = [...file_lst, ...folderFileTree(nPath)];
+                } else { 
+                  file_lst.push(nPath);
+                }
+              });
+              return file_lst;
+            }
             var wordInCommits = [];
             var affectedFiles = [];
 
@@ -80,9 +93,8 @@ jobs:
 
             // the test folder name
             // retive only fille tracked by the git repo
-            var testFiles = cleanTextList(
-              (child_process.execSync("git ls-files") + "").split("\n")
-            ).filter((k) => k.indexOf(testFolderName.toLowerCase()) == 0);
+            var testFiles = folderFileTree(testFolderName);
+            console.log("test files",testFiles);
             testFiles.forEach((fileName) => {
               // todo retive the list a file
               var fn = path.parse(fileName).name.toLowerCase();

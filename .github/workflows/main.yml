@@ -22,6 +22,12 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      
+      - uses: Amadevus/pwsh-script@v2
+        id: script222
+        with:
+          script: |
+            dir
       - uses: Amadevus/pwsh-script@v2
         id: script
         with:

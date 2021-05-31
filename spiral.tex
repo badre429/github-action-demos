@@ -1,63 +1,29 @@
-\documentclass{standalone}
-\usepackage{asymptote}
+% This is a simple sample document.  For more complicated documents take a look in the excersice tab. Note that everything that comes after a % symbol is treated as comment and ignored when the code is compiled.
 
-\begin{document}
+\documentclass{article} % \documentclass{} is the first command in any LaTeX code.  It is used to define what kind of document you are creating such as an article or a book, and begins the document preamble
 
-\begin{asy}[width=10cm,height=10cm]
-import graph3;
+\usepackage{amsmath} % \usepackage is a command that allows you to add functionality to your LaTeX code
 
-usepackage("amsfonts");
+\title{Simple Sample} % Sets article title
+\author{My Name} % Sets authors name
+\date{\today} % Sets date for date compiled
 
-size3(200);
+% The preamble ends with the command \begin{document}
+\begin{document} % All begin commands must be paired with an end command somewhere
+    \maketitle % creates title using infromation in preamble (title, author, date)
+    
+    \section{Hello World!} % creates a section
+    
+    \textbf{Hello World!} Today I am learning \LaTeX. %notice how the command will end at the first non-alphabet charecter such as the . after \LaTeX
+     \LaTeX{} is a great program for writing math. I can write in line math such as $a^2+b^2=c^2$ %$ tells LaTexX to compile as math
+     . I can also give equations their own space: 
+    \begin{equation} % Creates an equation environment and is compiled as math
+    \gamma^2+\theta^2=\omega^2
+    \end{equation}
+    If I do not leave any blank lines \LaTeX{} will continue  this text without making it into a new paragraph.  Notice how there was no indentation in the text after equation (1).  
+    Also notice how even though I hit enter after that sentence and here $\downarrow$
+     \LaTeX{} formats the sentence without any break.  Also   look  how      it   doesn't     matter          how    many  spaces     I put     between       my    words.
+    
+    For a new paragraph I can leave a blank space in my code. 
 
-currentprojection=orthographic(4,6,3);
-
-// parametrization
-real x(real t) {return cos(2pi*t);}
-real y(real t) {return sin(2pi*t);}
-real z(real t) {return 0.5*t;}
-real z0(real t) {return 0;}
-
-scale(true);
-
-// some parameters
-real delta = 0.01;
-real phix = 0.1;
-real phim = 6.7;
-
-// spiral
-path3 spiral1 = graph(x,y,z,0.9,1,operator ..);
-draw(spiral1,dotted);
-path3 spiral2 = graph(x,y,z,1,phim,operator ..);
-draw(spiral2,Arrow3);
-
-// blue circle
-draw(unitcircle3, blue);
-
-// orange segments
-pen sp = orange+1;
-
-draw(graph(x,y,z0,phix-delta,phix+delta,operator ..),sp);
-for(real i=1; i<phim; ++i) {
-  draw(graph(x,y,z,i+phix-delta,i+phix+delta,operator ..),sp);
-}
-
-// the dot x
-triple px = (x(phix),y(phix),0);
-dot(px);
-label("$x$",px,S);
-
-// axes and labels
-xaxis3("",red,Arrow3);
-yaxis3("",red,Arrow3);
-zaxis3("",red,Arrow3);
-
-label("$\mathbb{R}$",(1,-1,4));
-
-draw((-1,1,4)--(-1,1,1),Arrow3);
-label("$p$",(-1,1,2.5),E);
-
-label("$S^1$",(-1,1,0),W,blue);
-\end{asy}
-
-\end{document}
+\end{document} % This is the end of the document

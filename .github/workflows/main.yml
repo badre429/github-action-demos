@@ -27,5 +27,5 @@ jobs:
       
       - name: Run a powershell script
         run: .\build.ps1
-          shell: powershell
+        shell: powershell
       

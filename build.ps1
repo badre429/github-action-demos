@@ -5,3 +5,4 @@
 #  & .\context-setup-win64\context\first-setup.bat
 
 luatex.exe  -synctex=1 -interaction=nonstopmode --shell-escape .\spiral.tex
+dir

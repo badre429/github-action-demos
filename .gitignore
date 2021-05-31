@@ -2,3 +2,4 @@ config-script-matrix.js
 tmp
 node_modules
 matrix-values.json
+*.zip

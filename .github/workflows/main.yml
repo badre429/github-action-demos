@@ -26,6 +26,7 @@ jobs:
         id: script
         with:
           script: |
-            luatex.exe  -synctex=1 -interaction=nonstopmode --shell-escape .\spiral.tex
+            dir
+            luatex.exe  --synctex=1 --interaction=batchmode  --shell-escape .\spiral.tex
             dir
       

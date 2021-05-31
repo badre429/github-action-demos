@@ -22,17 +22,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+      - run: dir
       
-      - uses: Amadevus/pwsh-script@v2
-        id: script222
-        with:
-          script: |
-            dir
-      - uses: Amadevus/pwsh-script@v2
-        id: script
-        with:
-          script: |
-            dir
-            luatex.exe  --synctex=1 --interaction=batchmode  --shell-escape --enable-installer  .\spiral.tex
-            dir
+      - name: Run a powershell script
+        run: .\build.ps1
+          shell: powershell
       

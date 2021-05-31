@@ -7,3 +7,4 @@
 Get-ChildItem
 luatex.exe  --synctex=1 --interaction=batchmode  --shell-escape --enable-installer  .\spiral.tex
 Get-ChildItem
+exit 0

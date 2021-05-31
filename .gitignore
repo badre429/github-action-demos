@@ -5,3 +5,4 @@ matrix-values.json
 *.zip
 context-setup-win64
 bin
+spiral.*
